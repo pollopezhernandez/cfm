@@ -15,7 +15,6 @@ package launcher
 import (
 	"fmt"
 
-	"github.com/eclipse-cfm/cfm/assembly/httpclient"
 	"github.com/eclipse-cfm/cfm/assembly/routing"
 	"github.com/eclipse-cfm/cfm/common/runtime"
 	"github.com/eclipse-cfm/cfm/common/store"
@@ -67,7 +66,6 @@ func Launch(shutdown <-chan struct{}) {
 
 	assembler := system.NewServiceAssembler(logMonitor, vConfig, mode)
 
-	assembler.Register(&httpclient.HttpClientServiceAssembly{})
 	assembler.Register(&routing.RouterServiceAssembly{})
 	assembler.Register(&handler.HandlerServiceAssembly{})
 
