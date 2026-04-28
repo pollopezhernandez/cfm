@@ -241,6 +241,10 @@ func validateActivitySchema(activities []api.Activity, activityDefinitions map[a
 			}
 
 			if _, exists := mergedDependantOutputProperties[field]; !exists {
+				if len(activity.DependsOn) == 0 {
+					validationErrors = append(validationErrors, types.NewValidationError(activity.ID, "activity has required input fields in InputSchema but not declared dependencies"))
+					break
+				}
 				validationErrors = append(validationErrors, types.NewValidationError(activity.ID, fmt.Sprintf("required input field %s is not provided by dependent activities as output", field)))
 			}
 		}

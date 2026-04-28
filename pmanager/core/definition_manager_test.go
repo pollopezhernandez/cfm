@@ -1109,6 +1109,25 @@ func TestValidateActivitySchema_TransitiveDependencyNotDeclared(t *testing.T) {
 	assert.Contains(t, err.Error(), "required input field field-1 is not provided by dependent activities as output")
 }
 
+func TestValidateActivitySchema_RequiredFieldsButNoDependencies(t *testing.T) {
+	activities := []api.Activity{
+		{ID: "activity-a", Type: "type-a", DependsOn: []string{}},
+	}
+	activityDefinitions := map[api.ActivityType]*api.ActivityDefinition{
+		"type-a": {
+			InputSchema: map[string]any{
+				"properties": map[string]any{
+					"field-1": map[string]any{"type": "string"},
+				},
+				"required": []any{"field-1"},
+			},
+		},
+	}
+	err := validateActivitySchema(activities, activityDefinitions)
+	require.Error(t, err, "No dependency declared but additional fields in InputSchema required")
+	assert.Contains(t, err.Error(), "activity has required input fields in InputSchema but not declared dependencies")
+}
+
 // Helper mock store for testing error scenarios
 type mockDefinitionStore struct {
 	simulatedErrors map[string]error
